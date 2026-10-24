@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Obrigado – apto 304 Park Teixeiras</title>
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/site.js"></script>
+</head>
+<body>
+<main class="thanks">
+  <div id="ok" class="hidden">
+    <h1 id="ok-title">Obrigado!</h1>
+    <p>A corretora Patrícia Ferreira (CRECI MG 55.044) atende pelo WhatsApp. Toque no botão abaixo para enviar sua mensagem já preenchida e combinar a visita.</p>
+    <p class="center"><a id="wa" class="btn wa" href="#" rel="noopener">Falar com a corretora no WhatsApp</a></p>
+    <p class="note">A mensagem abre pronta no WhatsApp; é só tocar em enviar.</p>
+  </div>
+  <div id="nq" class="hidden">
+    <h1>Obrigado pelo interesse!</h1>
+    <p>Para seguir com este imóvel, sugerimos simular o crédito no seu banco. Com a pré-aprovação em mãos, é só preencher de novo.</p>
+    <p class="center"><a class="btn ghost" href="../#formulario">Voltar ao imóvel</a></p>
+  </div>
+  <noscript><p>Obrigado! Ative o JavaScript para ver o próximo passo.</p></noscript>
+  <p class="note mt">Corretora responsável: Patrícia Ferreira, CRECI MG 55.044. <a href="../privacidade/">Política de privacidade</a>.</p>
+</main>
+<script>
+(function () {
+  var S = window.SITE || {};
+  var q = new URLSearchParams(location.search);
+  function clean(v, max) {
+    return (v || "").replace(/[\u0000-\u001f<>]/g, "").replace(/\s+/g, " ").trim().slice(0, max || 80);
+  }
+  var c = clean(q.get("c"), 1).toUpperCase();
+  var o = clean(q.get("o"), 12).replace(/[^A-Za-z0-9-]/g, "") || "DIR";
+  var n = clean(q.get("n"), 60);
+  var p = clean(q.get("p"));
+  var z = clean(q.get("z"));
+  var f = clean(q.get("f"));
+  var qualified = c === "A" || c === "B";
+
+  // Conversão 1: envio do formulário (carregar /obrigado).
+  window.track("envio_formulario", { classe: qualified ? c : "N", origem: o }, S.CONV_ENVIO);
+
+  if (!qualified) {
+    document.getElementById("nq").classList.remove("hidden");
+    return;
+  }
+
+  // Mensagem conforme a Page: "Olá, Patrícia! Sou {n}. Vi o apto 304 Park Teixeiras [{o}-{c}]. Pagamento: {p}. Prazo: {z}. Finalidade: {f}."
+  var parts = ["Olá, Patrícia!"];
+  if (n) parts.push("Sou " + n + ".");
+  parts.push("Vi o apto 304 Park Teixeiras [" + o + "-" + c + "].");
+  if (p) parts.push("Pagamento: " + p + ".");
+  if (z) parts.push("Prazo: " + z + ".");
+  if (f) parts.push("Finalidade: " + f + ".");
+  var msg = parts.join(" ");
+  var href = "https://wa.me/" + (S.WHATSAPP || "5532999082480") + "?text=" + encodeURIComponent(msg);
+
+  if (n) document.getElementById("ok-title").textContent = "Obrigado, " + n.split(" ")[0] + "!";
+  var a = document.getElementById("wa");
+  a.href = href;
+  a.setAttribute("data-msg", msg);
+  // Conversão 2: clique no botão do WhatsApp.
+  a.addEventListener("click", function () {
+    window.track("clique_whatsapp", { classe: c, origem: o }, S.CONV_WHATSAPP);
+  });
+  document.getElementById("ok").classList.remove("hidden");
+})();
+</script>
+</body>
+</html>
